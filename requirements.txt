@@ -1,2 +1,5 @@
 mcp[cli]
 yfinance
+finnhub-python
+python-dotenv 
+fastmcp

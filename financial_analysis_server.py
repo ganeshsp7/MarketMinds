@@ -106,35 +106,39 @@
 
 from mcp.server.fastmcp import FastMCP
 import yfinance as yf
+import finnhub 
+import os
+from dotenv import load_dotenv
 
-mcp = FastMCP(name="yaho_finance")
+mcp = FastMCP(name="yahoo_finance")
+
 
 # Basic stock details
-@mcp.tool()
-def get_stock_details(symbol: str) -> dict:
-    """
-    Fetch stock details by ticker symbol (NSE).
-    Example: get_stock_details("RELIANCE")
-    """
-    sym = symbol.upper() + ".NS"
-    stock = yf.Ticker(sym)
-    info = stock.info
+# @mcp.tool()
+# def get_stock_details(symbol: str) -> dict:
+#     """
+#     Fetch stock details by ticker symbol (NSE).
+#     Example: get_stock_details("RELIANCE")
+#     """
+#     sym = symbol.upper() + ".NS"
+#     stock = yf.Ticker(sym)
+#     info = stock.info
     
-    return {
-        "symbol": symbol,
-        "name": info.get("shortName"),
-        "current_price": info.get("currentPrice"),
-        "market_cap": info.get("marketCap"),
-        "day_high": info.get("dayHigh"),
-        "day_low": info.get("dayLow"),
-        "currency": info.get("currency"),
-    }
+#     return {
+#         "symbol": symbol,
+#         "name": info.get("shortName"),
+#         "current_price": info.get("currentPrice"),
+#         "market_cap": info.get("marketCap"),
+#         "day_high": info.get("dayHigh"),
+#         "day_low": info.get("dayLow"),
+#         "currency": info.get("currency"),
+#     }
 
 # Fundamental metrics with growth calculations
 @mcp.tool()
 def get_fundamental_metrics(symbol: str) -> dict:
     """
-    Fetch fundamental metrics of an Indian NSE stock.
+    Fetch fundamental metrics of an Indian NSE stock for analysis.
     Includes Revenue Growth, Net Income Growth, EPS Growth, P/E, P/B, ROE, Free Cash Flow, Dividend Yield & Payout.
     Example: get_fundamental_metrics("RELIANCE")
     """
@@ -190,6 +194,8 @@ def get_fundamental_metrics(symbol: str) -> dict:
         "current_price": info.get("currentPrice"),
         "market_cap": info.get("marketCap"),
         "currency": info.get("currency"),
+        "day_high": info.get("dayHigh"),
+        "day_low": info.get("dayLow"),
 
         # Fundamental Metrics
         "revenue_growth_percent": revenue_growth,
@@ -213,6 +219,7 @@ def get_fundamental_metrics(symbol: str) -> dict:
         "dividend_payout_ratio": dividend_payout,
         "revenue": financials.loc["Total Revenue"][0] if "Total Revenue" in financials.index else None,
     }
+
 
 if __name__ == "__main__":
     mcp.run()
