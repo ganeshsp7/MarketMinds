@@ -1,59 +1,70 @@
-# from mcp.server.fastmcp import FastMCP
-# import finnhub 
-# import os
-# from dotenv import load_dotenv
+from mcp.server.fastmcp import FastMCP
+import requests
+import os
+from dotenv import load_dotenv
 
-# mcp = FastMCP(name="News_sentiment_analysis")
+mcp = FastMCP(name="Market_News_Fetcher")
 
-# # Load environment variables from .env file
-# load_dotenv()
+# load .env file into environment
+load_dotenv()
 
-# # Get API key from environment
-# FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
+NEWSAPI_KEY = os.getenv("NEWS_API_KEY")  
 
-# # Setup client
-# finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
+def fetch_company_news(company: str, limit: int = 5):
+    """
+    Fetch latest news articles about a company using NewsAPI.
+    """
+    url = "https://newsapi.org/v2/everything"
+    params = {
+        "q": company,
+        "sortBy": "publishedAt",
+        "language": "en",
+        "pageSize": limit,
+        "apiKey": NEWSAPI_KEY,
+    }
 
+    resp = requests.get(url, params=params)
+    data = resp.json()
 
-# # Market News Tool
-# @mcp.tool()
-# def get_company_news(symbol: str, days: int = 15) -> list:
-#     """
-#     Fetch latest company-specific news for a given stock ticker (NSE).
-#     Example: get_company_news("RELIANCE", days=15)
-#     """
-#     import datetime
+    if data.get("status") != "ok":
+        return {"error": data.get("message", "Unknown error")}
 
-#     sym = symbol.upper() + ".NS"
-
-#     # Date range
-#     today = datetime.date.today()
-#     start_date = today - datetime.timedelta(days=days)
-
-#     # Fetch company news from Finnhub (works on global symbols, so strip .NS for API call)
-#     news = finnhub_client.company_news(
-#         sym,
-#         _from=str(start_date),
-#         to=str(today)
-#     )
-
-#     # Format top 5 headlines
-#     latest_news = []
-#     for item in news[:5]:
-#         latest_news.append({
-#             "headline": item.get("headline"),
-#             "datetime": datetime.datetime.fromtimestamp(item["datetime"]).strftime("%Y-%m-%d %H:%M"),
-#             "source": item.get("source"),
-#             "url": item.get("url")
-#         })
-
-#     return {
-#         "symbol": symbol,
-#         "news_count": len(news),
-#         "latest_news": latest_news
-#     }
+    return data.get("articles", [])
 
 
+@mcp.tool()
+def Company_News(company: str, limit: int = 5) -> dict:
+    """
+    Fetch latest news of a given company so LLM can analyze sentiment or other insights to support investment decisions.
 
-# if __name__ == "__main__":
-#     mcp.run()
+    Args:
+        company (str): Company name (e.g., "Tesla", "Apple").
+        limit (int): Number of articles (default=5).
+
+    Returns:
+        dict: {
+            "company": str,
+            "articles": [
+                {"title": str, "url": str, "description": str, "publishedAt": str}
+            ]
+        }
+    """
+    articles = fetch_company_news(company, limit)
+    # Ensure we got a list of dicts
+    if not isinstance(articles, list):
+        return {"error": f"Unexpected response: {articles}"}
+    
+    results = []
+    for art in articles:
+        results.append({
+            "title": art.get("title", ""),
+            "url": art.get("url", ""),
+            "description": art.get("description", ""),
+            "publishedAt": art.get("publishedAt", "")
+        })
+
+    return {"company": company, "articles": results}
+
+
+if __name__ == "__main__":
+    mcp.run()
