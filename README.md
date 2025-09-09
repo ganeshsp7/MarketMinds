@@ -78,3 +78,17 @@ After creating your tools (backtest_simulation.py, financial_analysis_server.py,
 
 
 💡 Tip: Make sure your .env contains the NEWS_API_KEY and that it’s loaded (e.g., via python-dotenv) so the news fetcher works properly.
+
+
+# Note
+#### Stock Market MCP Servers (NSE + Yahoo Finance)
+
+This is a personal study project that fetches market data using:  
+- [yfinance](https://pypi.org/project/yfinance/) → for Yahoo Finance (U.S. & international stocks)  
+- [nsepython](https://pypi.org/project/nsepython/) → for NSE India market data (equities, options, etc.)  
+
+⚠️ Disclaimer:
+- This project is for **educational purposes only**.
+- Market data from Yahoo Finance is subject to [Yahoo Finance Terms of Service](https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html).
+- Market data from NSE India is subject to [NSE Terms of Use](https://www.nseindia.com/terms-of-use).
+- Not intended for commercial use, trading platforms, or redistribution of data.
