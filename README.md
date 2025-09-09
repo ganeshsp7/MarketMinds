@@ -15,6 +15,9 @@ MarketMinds is a lightweight **MCP (Model Context Protocol)** toolset to support
 - **Sentiment News Fetcher** (`sentiment_analysis.py`):  
   Fetch recent news articles for a given company using NewsAPI—perfect for feeding into LLMs for sentiment-based investing decisions.
 
+- **Option Chain Analyzer** (`option_chain_analysis.py`):
+  Fetch NSE option chain data for a given stock symbol, returning calls (CE) and puts (PE) for the first available expiry—ideal for analyzing support and resistance levels or feeding structured derivatives data into LLMs for market insights. 
+
 ## ⚡ Installation
 
 Use `uv` package manager to install dependencies:
@@ -48,7 +51,7 @@ After creating your tools (backtest_simulation.py, financial_analysis_server.py,
     After execution, the output will look similar to:
     ``` bash
     Added server 'BackTest_Simulation' to Claude config
-    INFO Successfully installed Market_News_Fetcher in Claude app
+    Successfully installed Market_News_Fetcher in Claude app
     ```
 
 
@@ -60,7 +63,7 @@ After creating your tools (backtest_simulation.py, financial_analysis_server.py,
      After execution, the output will look similar to:
     ``` bash
     Added server 'financial_analysis' to Claude config
-    INFO Successfully installed Market_News_Fetcher in Claude app
+    Successfully installed Market_News_Fetcher in Claude app
     ```
 
 3. Sentiment News Fetcher
@@ -71,7 +74,18 @@ After creating your tools (backtest_simulation.py, financial_analysis_server.py,
      After execution, the output will look similar to:
     ``` bash
     Added server 'Market_News_Fetcher' to Claude config
-    INFO Successfully installed Market_News_Fetcher in Claude app
+    Successfully installed Market_News_Fetcher in Claude app
+    ```
+
+4. Option Chain Analyzer
+    ``` bash
+    uv run mcp install option_chain.py
+    ```
+    This command adds the Python script sentiment_analysis.py to the MCP framework as a tool, enabling Claude to invoke it during its operations.
+     After execution, the output will look similar to:
+    ``` bash
+    Added server 'option_chain_analysis' to Claude config 
+    Successfully installed Market_News_Fetcher in Claude app
     ```
 
 
